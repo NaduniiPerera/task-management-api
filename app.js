@@ -1,6 +1,7 @@
 const express = require("express");
 const taskRoutes = require("./routes/taskRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const authRoutes = require("./routes/authRoutes");
 const logger = require("./middleware/logger");
 
 const app = express();
@@ -14,6 +15,7 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use("/auth", authRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/categories", categoryRoutes);
 
