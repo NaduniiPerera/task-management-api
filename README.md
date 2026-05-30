@@ -14,31 +14,40 @@ This is a RESTful Task Management API built using Node.js and Express.js for the
 - Categories resource
 - Get tasks by category
 - Request logging middleware
+- User registration and login with JWT authentication
+- Protected task routes using JWT middleware
 
 ## Technologies Used
 
 - Node.js
 - Express.js
+- JavaScript
 - Git
 - GitHub
 - Postman for API testing
+- JSON Web Token
+- bcryptjs
 
 ## Project Structure
 
 ```text
 task-management-api/
 ├── controllers/
-│   ├── taskController.js
-│   └── categoryController.js
+│   ├── authController.js
+│   ├── categoryController.js
+│   └── taskController.js
 ├── middleware/
+│   ├── authMiddleware.js
 │   ├── logger.js
 │   └── validateTask.js
 ├── models/
+│   ├── categoryModel.js
 │   ├── taskModel.js
-│   └── categoryModel.js
+│   └── userModel.js
 ├── routes/
-│   ├── taskRoutes.js
-│   └── categoryRoutes.js
+│   ├── authRoutes.js
+│   ├── categoryRoutes.js
+│   └── taskRoutes.js
 ├── app.js
 ├── server.js
 ├── package.json
@@ -52,7 +61,7 @@ task-management-api/
 Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/task-management-api
+git clone https://github.com/NaduniiPerera/task-management-api
 ```
 
 Go into the project folder:
@@ -85,6 +94,26 @@ The server will run on:
 http://localhost:3000
 ```
 
+## Authentication
+
+This API includes JWT authentication.
+
+Users can register and login using the authentication endpoints. After registration or login, the API returns a JWT token.
+
+All task routes are protected. To access task routes, the token must be sent in the request header.
+
+Authorization header format:
+
+```text
+Authorization: Bearer YOUR_TOKEN_HERE
+```
+
+In Postman, the token can be added from:
+
+```text
+Authorization → Bearer Token
+```
+
 ## API Endpoints
 
 ### Home Route
@@ -99,25 +128,77 @@ Example:
 curl http://localhost:3000/
 ```
 
+### Register User
+
+```http
+POST /auth/register
+```
+
+Example request body:
+
+```json
+{
+  "name": "Naduni",
+  "email": "naduni@example.com",
+  "password": "123456"
+}
+```
+
+Example curl:
+
+```bash
+curl -X POST http://localhost:3000/auth/register \
+-H "Content-Type: application/json" \
+-d "{\"name\":\"Naduni\",\"email\":\"naduni@example.com\",\"password\":\"123456\"}"
+```
+
+### Login User
+
+```http
+POST /auth/login
+```
+
+Example request body:
+
+```json
+{
+  "email": "naduni@example.com",
+  "password": "123456"
+}
+```
+
+Example curl:
+
+```bash
+curl -X POST http://localhost:3000/auth/login \
+-H "Content-Type: application/json" \
+-d "{\"email\":\"naduni@example.com\",\"password\":\"123456\"}"
+```
+
 ### Get All Tasks
+
+This route is protected and requires a JWT token.
 
 ```http
 GET /tasks
 ```
 
-Example:
+Example curl:
 
 ```bash
-curl http://localhost:3000/tasks
+curl http://localhost:3000/tasks \
+-H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 ### Create Task
+
+This route is protected and requires a JWT token.
 
 ```http
 POST /tasks
 ```
 
-Example body:
+Example request body:
 
 ```json
 {
@@ -134,28 +215,34 @@ Example curl:
 ```bash
 curl -X POST http://localhost:3000/tasks \
 -H "Content-Type: application/json" \
+-H "Authorization: Bearer YOUR_TOKEN_HERE" \
 -d "{\"title\":\"Learn Express\",\"description\":\"Build REST API using Express\",\"status\":\"todo\",\"priority\":\"high\",\"categoryId\":1}"
 ```
 
 ### Get Task By ID
 
+This route is protected and requires a JWT token.
+
 ```http
 GET /tasks/:id
 ```
 
-Example:
+Example curl:
 
 ```bash
-curl http://localhost:3000/tasks/1
+curl http://localhost:3000/tasks/1 \
+-H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 ### Update Task
+
+This route is protected and requires a JWT token.
 
 ```http
 PUT /tasks/:id
 ```
 
-Example body:
+Example request body:
 
 ```json
 {
@@ -172,43 +259,53 @@ Example curl:
 ```bash
 curl -X PUT http://localhost:3000/tasks/1 \
 -H "Content-Type: application/json" \
+-H "Authorization: Bearer YOUR_TOKEN_HERE" \
 -d "{\"title\":\"Updated Task\",\"description\":\"Updated task description\",\"status\":\"in-progress\",\"priority\":\"medium\",\"categoryId\":1}"
 ```
 
 ### Delete Task
 
+This route is protected and requires a JWT token.
+
 ```http
 DELETE /tasks/:id
 ```
 
-Example:
+Example curl:
 
 ```bash
-curl -X DELETE http://localhost:3000/tasks/1
+curl -X DELETE http://localhost:3000/tasks/1 \
+-H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 ### Filter Tasks
+
+This route is protected and requires a JWT token.
 
 ```http
 GET /tasks?status=todo&priority=high
 ```
 
-Example:
+Example curl:
 
 ```bash
-curl "http://localhost:3000/tasks?status=todo&priority=high"
+curl "http://localhost:3000/tasks?status=todo&priority=high" \
+-H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 ### Pagination
+
+This route is protected and requires a JWT token.
 
 ```http
 GET /tasks?page=1&limit=10
 ```
 
-Example:
+Example curl:
 
 ```bash
-curl "http://localhost:3000/tasks?page=1&limit=10"
+curl "http://localhost:3000/tasks?page=1&limit=10" \
+-H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 ### Get All Categories
@@ -229,7 +326,7 @@ curl http://localhost:3000/categories
 POST /categories
 ```
 
-Example body:
+Example request body:
 
 ```json
 {
@@ -269,11 +366,28 @@ Example:
 curl http://localhost:3000/categories/1/tasks
 ```
 
+## Task Data Format
+
+Each task contains the following fields:
+
+```json
+{
+  "id": 1,
+  "title": "Complete backend lab",
+  "description": "Build RESTful Task Management API",
+  "status": "todo",
+  "priority": "high",
+  "categoryId": 1,
+  "createdAt": "date",
+  "updatedAt": "date"
+}
+```
+
 ## Validation Rules
 
 Task fields are validated before creating or updating a task.
 
-Required fields:
+Required task fields:
 
 - title
 - description
@@ -300,9 +414,11 @@ If invalid data is sent, the API returns a `400 Bad Request` response.
 
 If a task or category is not found, the API returns a `404 Not Found` response.
 
-## Notes
+## Important Notes
 
-This project uses an in-memory data store. Therefore, data will reset when the server restarts.
+This project uses an in-memory data store instead of a database. Therefore, created tasks, categories, and users will reset when the server restarts.
+
+The code is structured using models, controllers, routes, and middleware so that a real database can be added later.
 
 ## Author
 
