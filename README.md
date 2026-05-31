@@ -2,31 +2,33 @@
 
 This is a RESTful Task Management API built using Node.js and Express.js for the Bloomtech Junior Web Developer Intern Technical Assessment.
 
+The API supports task management, category management, request validation, filtering, pagination, request logging, and JWT-based authentication.
+
 ## Features
 
-- Express.js server
-- Proper project structure with routes, controllers, models, and middleware
-- Full CRUD operations for tasks
-- In-memory data store
-- Input validation with meaningful error messages
-- Filtering by status and priority
-- Basic pagination
-- Categories resource
-- Get tasks by category
-- Request logging middleware
-- User registration and login with JWT authentication
-- Protected task routes using JWT middleware
+* Express.js server
+* Proper project structure with routes, controllers, models, and middleware
+* Full CRUD operations for tasks
+* In-memory data store
+* Input validation with meaningful error messages
+* Filtering by status and priority
+* Basic pagination
+* Categories resource
+* Get tasks by category
+* Request logging middleware
+* User registration and login with JWT authentication
+* Protected task routes using JWT middleware
 
 ## Technologies Used
 
-- Node.js
-- Express.js
-- JavaScript
-- Git
-- GitHub
-- Postman for API testing
-- JSON Web Token
-- bcryptjs
+* Node.js
+* Express.js
+* JavaScript
+* Git
+* GitHub
+* Postman for API testing
+* JSON Web Token
+* bcryptjs
 
 ## Project Structure
 
@@ -98,7 +100,7 @@ http://localhost:3000
 
 This API includes JWT authentication.
 
-Users can register and login using the authentication endpoints. After registration or login, the API returns a JWT token.
+Users can register and login using the authentication endpoints. After successful registration or login, the API returns a JWT token.
 
 All task routes are protected. To access task routes, the token must be sent in the request header.
 
@@ -113,6 +115,16 @@ In Postman, the token can be added from:
 ```text
 Authorization → Bearer Token
 ```
+
+## Important In-Memory Data Store Note
+
+This project uses an in-memory data store instead of a database.
+
+That means users, tasks, and categories are stored only while the server is running. If the server is stopped or restarted, any newly registered users, created tasks, and created categories will be reset.
+
+For example, if a user registers and logs in successfully, those login details are available only during the current server session. After restarting the server, the previous registered user details will no longer exist, so the user must register again before logging in.
+
+This behavior is expected because the assessment says that no database is required. The code is still organized using models, controllers, routes, and middleware so that a real database can be added later with fewer changes.
 
 ## API Endpoints
 
@@ -389,10 +401,10 @@ Task fields are validated before creating or updating a task.
 
 Required task fields:
 
-- title
-- description
-- status
-- priority
+* title
+* description
+* status
+* priority
 
 Allowed status values:
 
@@ -414,11 +426,39 @@ If invalid data is sent, the API returns a `400 Bad Request` response.
 
 If a task or category is not found, the API returns a `404 Not Found` response.
 
-## Important Notes
+## Completed Requirements
 
-This project uses an in-memory data store instead of a database. Therefore, created tasks, categories, and users will reset when the server restarts.
+### Core Requirements Completed
 
-The code is structured using models, controllers, routes, and middleware so that a real database can be added later.
+* Set up an Express.js server
+* Used a proper project structure with routes, controllers, models, and middleware
+* Implemented full CRUD for tasks
+* Added required task fields: id, title, description, status, priority, createdAt, and updatedAt
+* Added query-string filtering by status and priority
+* Implemented input validation with meaningful error messages
+* Used proper HTTP status codes such as 400 and 404
+* Used an in-memory data store
+* Structured the code so a real database can be added later
+
+### Intermediate Challenges Completed
+
+* Added a Categories resource
+* Allowed tasks to be assigned to a category
+* Added endpoint to get tasks by category
+* Implemented basic pagination
+* Added request logging middleware
+* Wrote setup instructions and example API requests in this README file
+
+### Stretch Goal Completed
+
+* Added user registration with `POST /auth/register`
+* Added user login with `POST /auth/login`
+* Returned a JWT token after registration and login
+* Protected all task routes using JWT authentication middleware
+
+### Stretch Goal Not Completed
+
+* Live deployment was not completed because the deployment platform required card/payment verification.
 
 ## Author
 
