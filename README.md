@@ -456,9 +456,6 @@ If a task or category is not found, the API returns a `404 Not Found` response.
 * Returned a JWT token after registration and login
 * Protected all task routes using JWT authentication middleware
 
-### Stretch Goal Not Completed
-
-* Live deployment was not completed because the deployment platform required card/payment verification.
 
 ## Author
 
